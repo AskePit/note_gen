@@ -2,6 +2,7 @@ extern crate rand;
 
 use rand::Rng;
 use std::io;
+use std::mem::transmute;
 
 trait Item {
 	fn to_str(&self) -> &str;
@@ -14,15 +15,15 @@ trait Item {
 
 macro_rules! item_ext {
 	( $x:ident ) => (
-		fn count() -> i32 { $x::Count as i32 }
-		fn rand() -> $x { unsafe { std::mem::transmute( rand::thread_rng().gen_range(0, $x::count()) ) } }
+		fn count() -> i32 { $x::End as i32 }
+		fn rand() -> $x { unsafe { transmute( rand::thread_rng().gen_range(0, $x::count()) ) } }
 	);
 }
 
 
 #[repr(i32)]
 pub enum Note {
-	A, B, C, D, E, F, G, Count
+	A, B, C, D, E, F, G, End
 }
 
 impl Item for Note {
@@ -46,7 +47,8 @@ impl Item for Note {
 pub enum Tone {
 	Major,
 	Minor,
-	Count
+
+	End
 }
 
 impl Item for Tone {
@@ -65,7 +67,8 @@ pub enum Sign {
 	No,
 	Sharp,
 	Flat,
-	Count
+
+	End
 }
 
 impl Item for Sign {
@@ -87,7 +90,8 @@ pub enum Extra {
 	Dim,
 	Sus2,
 	Sus4,
-	Count,
+
+	End,
 }
 
 impl Item for Extra {
