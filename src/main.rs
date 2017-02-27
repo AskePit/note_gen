@@ -13,22 +13,22 @@ trait Item {
 }
 
 macro_rules! item_ext {
-    ( $x:ident ) => (
+	( $x:ident ) => (
 		fn count() -> i32 { $x::Count as i32 }
 		fn rand() -> $x { unsafe { std::mem::transmute( rand::thread_rng().gen_range(0, $x::count()) ) } }
-    );
+	);
 }
 
 
 #[repr(i32)]
-enum Note {
-    A, B, C, D, E, F, G, Count
+pub enum Note {
+	A, B, C, D, E, F, G, Count
 }
 
 impl Item for Note {
-    fn to_str(&self) -> &str {
-	    match *self {
-		    Note::A => "A",
+	fn to_str(&self) -> &str {
+		match *self {
+			Note::A => "A",
 			Note::B => "B",
 			Note::C => "C",
 			Note::D => "D",
@@ -43,15 +43,15 @@ impl Item for Note {
 }
 
 #[repr(i32)]
-enum Tone {
+pub enum Tone {
 	Major,
 	Minor,
 	Count
 }
 
 impl Item for Tone {
-    fn to_str(&self) -> &str {
-	    match *self {
+	fn to_str(&self) -> &str {
+		match *self {
 			Tone::Minor => "m",
 			_ => "",
 		}
@@ -61,7 +61,7 @@ impl Item for Tone {
 }
 
 #[repr(i32)]
-enum Sign {
+pub enum Sign {
 	No,
 	Sharp,
 	Flat,
@@ -69,19 +69,19 @@ enum Sign {
 }
 
 impl Item for Sign {
-    fn to_str(&self) -> &str {
-	    match *self {
+	fn to_str(&self) -> &str {
+		match *self {
 			Sign::Sharp => "#",
 			Sign::Flat => "b",
 			_ => "",
 		}
 	}
-	
+
 	item_ext!(Sign);
 }
 
 #[repr(i32)]
-enum Extra {
+pub enum Extra {
 	No,
 	Sept,
 	Dim,
@@ -91,8 +91,8 @@ enum Extra {
 }
 
 impl Item for Extra {
-    fn to_str(&self) -> &str {
-	    match *self {
+	fn to_str(&self) -> &str {
+		match *self {
 			Extra::Sept => "7",
 			Extra::Dim => "dim",
 			Extra::Sus2 => "sus2",
@@ -100,7 +100,7 @@ impl Item for Extra {
 			_ => "",
 		}
 	}
-	
+
 	item_ext!(Extra);
 }
 
@@ -112,18 +112,20 @@ fn main() {
 			false => println!("{}{}{}", Note::rand_str(), Sign::rand_str(), Tone::rand_str()),
 			true => println!("\r\n{}{}{}{}", Note::rand_str(), Sign::rand_str(), Tone::rand_str(), Extra::rand_str()),
 		}
-		
+
 		extra = false;
-		
+
 		let mut key: String = String::new();
 		io::stdin().read_line(&mut key).expect("failed to read line");
-		
-		if key == "x\r\n" {
+
+		key = String::from(key.trim());
+
+		if key == "x" {
 			extra = true;
 			continue;
 		}
-		
-		if key != "\r\n" {
+
+		if key != "" {
 			break;
 		}
 	}
