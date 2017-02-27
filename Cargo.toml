@@ -1,0 +1,7 @@
+[package]
+name = "note_gen"
+version = "0.1.0"
+authors = ["Nikolay Shalakin <nikolay.shalakin@astrosoft.ru>"]
+
+[dependencies]
+rand="*"
