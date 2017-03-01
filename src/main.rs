@@ -44,25 +44,6 @@ impl Item for Note {
 }
 
 #[repr(i32)]
-pub enum Tone {
-	Major,
-	Minor,
-
-	End
-}
-
-impl Item for Tone {
-	fn to_str(&self) -> &str {
-		match *self {
-			Tone::Minor => "m",
-			_ => "",
-		}
-	}
-	
-	item_ext!(Tone);
-}
-
-#[repr(i32)]
 pub enum Sign {
 	No,
 	Sharp,
@@ -84,28 +65,79 @@ impl Item for Sign {
 }
 
 #[repr(i32)]
-pub enum Extra {
-	No,
-	Sept,
+pub enum Tone {
+	Major,
+	Minor,
+
+	End
+}
+
+impl Item for Tone {
+	fn to_str(&self) -> &str {
+		match *self {
+			Tone::Minor => "m",
+			_ => "",
+		}
+	}
+	
+	item_ext!(Tone);
+}
+
+#[repr(i32)]
+pub enum ExtraTone {
+	Major,
+	Minor,
+	
+	Dom7,
+	Maj7,
+	Min7,
+	
+	Dom9,
+	DomMin9,
+	Maj9,
+	Min9,
+	Add9,
+	
+	Dom13,
+	Add13,
+	
+	Aug,
 	Dim,
 	Sus2,
 	Sus4,
+	Power,
 
 	End,
 }
 
-impl Item for Extra {
+impl Item for ExtraTone {
 	fn to_str(&self) -> &str {
 		match *self {
-			Extra::Sept => "7",
-			Extra::Dim => "dim",
-			Extra::Sus2 => "sus2",
-			Extra::Sus4 => "sus4",
+			ExtraTone::Minor => "m",
+	
+			ExtraTone::Dom7 => "7",
+			ExtraTone::Maj7 => "maj7",
+			ExtraTone::Min7 => "m7",
+			
+			ExtraTone::Dom9 => "9",
+			ExtraTone::DomMin9 => "7b9",
+			ExtraTone::Maj9 => "maj9",
+			ExtraTone::Min9 => "m9",
+			ExtraTone::Add9 => "add9",
+			
+			ExtraTone::Dom13 => "13",
+			ExtraTone::Add13 => "add13",
+			
+			ExtraTone::Aug => "aug",
+			ExtraTone::Dim => "dim",
+			ExtraTone::Sus2 => "sus2",
+			ExtraTone::Sus4 => "sus4",
+			ExtraTone::Power => "5",
 			_ => "",
 		}
 	}
 
-	item_ext!(Extra);
+	item_ext!(ExtraTone);
 }
 
 fn main() {
@@ -114,7 +146,7 @@ fn main() {
 	loop {
 		match extra {
 			false => println!("{}{}{}", Note::rand_str(), Sign::rand_str(), Tone::rand_str()),
-			true => println!("\r\n{}{}{}{}", Note::rand_str(), Sign::rand_str(), Tone::rand_str(), Extra::rand_str()),
+			true => println!("\r\n{}{}{}", Note::rand_str(), Sign::rand_str(), ExtraTone::rand_str()),
 		}
 
 		extra = false;
