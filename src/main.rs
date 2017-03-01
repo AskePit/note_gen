@@ -22,6 +22,7 @@ macro_rules! item_ext {
 
 
 #[repr(i32)]
+#[derive(Copy, Clone)]
 pub enum Note {
 	A, B, C, D, E, F, G, End
 }
@@ -44,6 +45,7 @@ impl Item for Note {
 }
 
 #[repr(i32)]
+#[derive(Copy, Clone)]
 pub enum Sign {
 	No,
 	Sharp,
@@ -65,6 +67,7 @@ impl Item for Sign {
 }
 
 #[repr(i32)]
+#[derive(Copy, Clone)]
 pub enum Tone {
 	Major,
 	Minor,
@@ -84,6 +87,7 @@ impl Item for Tone {
 }
 
 #[repr(i32)]
+#[derive(Copy, Clone)]
 pub enum ExtraTone {
 	Major,
 	Minor,
@@ -140,29 +144,82 @@ impl Item for ExtraTone {
 	item_ext!(ExtraTone);
 }
 
-fn main() {
-	let mut extra: bool = false;
+static SEPT7_SET: [ExtraTone; 3] = [
+	ExtraTone::Dom7,
+    ExtraTone::Maj7,
+    ExtraTone::Min7,
+];
 
-	loop {
-		match extra {
-			false => println!("{}{}{}", Note::rand_str(), Sign::rand_str(), Tone::rand_str()),
-			true => println!("\r\n{}{}{}", Note::rand_str(), Sign::rand_str(), ExtraTone::rand_str()),
+static SEPT9_SET: [ExtraTone; 5] = [
+	ExtraTone::Dom9,
+	ExtraTone::DomMin9,
+    ExtraTone::Maj9,
+    ExtraTone::Min9,
+	ExtraTone::Add9,
+];
+
+static SEPT13_SET: [ExtraTone; 2] = [
+	ExtraTone::Dom13,
+	ExtraTone::Add13,
+];
+
+static OTHER_SET: [ExtraTone; 5] = [
+	ExtraTone::Aug,
+	ExtraTone::Dim,
+	ExtraTone::Sus2,
+	ExtraTone::Sus4,
+	ExtraTone::Power,
+];
+
+fn rand_from_set(set: &[ExtraTone]) -> ExtraTone {
+	let i = rand::thread_rng().gen_range(0, set.len());
+	set[i]
+}
+
+pub enum ChordType {
+	No,
+	Simple,
+	Any,
+	
+	Sept7,
+	Sept9,
+	Sept13,
+	
+	Other,
+}
+
+impl ChordType {
+	fn from_str(string: &str) -> ChordType {
+		match string {
+			"" => ChordType::Simple,
+			"x" => ChordType::Any,
+			"7" => ChordType::Sept7,
+			"9" => ChordType::Sept9,
+			"13" => ChordType::Sept13,
+			"s" => ChordType::Other,
+			_ => ChordType::No,
 		}
+	}
+}
 
-		extra = false;
-
+fn main() {
+	loop {
 		let mut key: String = String::new();
 		io::stdin().read_line(&mut key).expect("failed to read line");
-
 		key = String::from(key.trim());
-
-		if key == "x" {
-			extra = true;
-			continue;
-		}
-
-		if key != "" {
-			break;
-		}
+		
+		let chord = ChordType::from_str(&key);
+		
+		let last_str = match chord {
+			ChordType::Simple => Tone::rand_str(),
+			ChordType::Any    => ExtraTone::rand_str(),
+			ChordType::Sept7  => String::from(rand_from_set(&SEPT7_SET).to_str()),
+			ChordType::Sept9  => String::from(rand_from_set(&SEPT9_SET).to_str()),
+			ChordType::Sept13 => String::from(rand_from_set(&SEPT13_SET).to_str()),
+			ChordType::Other  => String::from(rand_from_set(&OTHER_SET).to_str()),
+			_ => break,
+		};
+		
+		println!("\n{}{}{}", Note::rand_str(), Sign::rand_str(), last_str);
 	}
 }
